@@ -28,6 +28,14 @@ class UserController {
       login,
     });
   }
+
+  async index(req, res) {
+    const users = await User.findAll({
+      attributes: ['id', 'login'],
+    });
+
+    return res.json(users);
+  }
 }
 
 export default new UserController();
