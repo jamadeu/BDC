@@ -31,7 +31,7 @@ class Request extends Model {
     this.belongsToMany(models.Equipment, {
       through: 'assigns',
       foreignKey: 'request_id',
-      as: 'request',
+      as: 'equipment',
     });
   }
 }

@@ -18,7 +18,7 @@ class Equipment extends Model {
     this.belongsToMany(models.Request, {
       through: 'assigns',
       foreignKey: 'equipment_id',
-      as: 'equipment',
+      as: 'request',
     });
   }
 }
