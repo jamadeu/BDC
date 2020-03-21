@@ -1,5 +1,6 @@
 import { Router } from 'express';
 
+import EquipmentController from './app/controllers/EquipmentController';
 import LocalityController from './app/controllers/LocalityController';
 import UserController from './app/controllers/UserController';
 
@@ -10,5 +11,7 @@ routes.get('/user', UserController.index);
 
 routes.post('/locality', LocalityController.store);
 routes.get('/locality', LocalityController.index);
+
+routes.post('/equipment', EquipmentController.store);
 
 export default routes;
