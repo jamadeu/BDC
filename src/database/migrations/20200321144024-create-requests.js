@@ -27,7 +27,6 @@ module.exports = {
       locality_id: {
         type: Sequelize.INTEGER,
         references: { model: 'localities', key: 'id' },
-        allowNull: false,
       },
       user_id: {
         type: Sequelize.INTEGER,
