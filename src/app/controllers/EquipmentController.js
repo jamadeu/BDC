@@ -1,6 +1,9 @@
 import * as Yup from 'yup';
 
 import Equipment from '../models/Equipment';
+import Locality from '../models/Locality';
+import Request from '../models/Request';
+import User from '../models/User';
 
 class EquipmentController {
   async store(req, res) {
@@ -31,6 +34,41 @@ class EquipmentController {
       series,
       model,
     });
+  }
+
+  async show(req, res) {
+    const equipment = await Equipment.findByPk(req.params.id, {
+      attributes: ['id', 'partnumber', 'series', 'model'],
+      include: [
+        {
+          model: Request,
+          as: 'requests',
+          attributes: [
+            'id',
+            'request',
+            'reserveds_date',
+            'seal',
+            'expedition_date',
+            'invoice',
+          ],
+          through: { attributes: [] },
+          include: [
+            {
+              model: User,
+              as: 'user',
+              attributes: ['id', 'login'],
+            },
+            {
+              model: Locality,
+              as: 'locality',
+              attributes: ['id', 'locality'],
+            },
+          ],
+        },
+      ],
+    });
+
+    return res.json(equipment);
   }
 }
 
