@@ -10,7 +10,6 @@ module.exports = {
       request: {
         type: Sequelize.STRING,
         allowNull: false,
-        unique: true,
       },
       reserveds_date: {
         type: Sequelize.DATE,

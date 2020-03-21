@@ -14,6 +14,10 @@ routes.post('/locality', LocalityController.store);
 routes.get('/locality', LocalityController.index);
 
 routes.post('/equipment', EquipmentController.store);
+
 routes.post('/request', RequestController.store);
+routes.get('/request', RequestController.index);
+routes.get('/request/:id', RequestController.show);
+routes.put('/request/:id', RequestController.update);
 
 export default routes;
