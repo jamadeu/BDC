@@ -70,6 +70,14 @@ class EquipmentController {
 
     return res.json(equipment);
   }
+
+  async index(req, res) {
+    /**
+     * Implement list where: { series: req.body.series }
+     */
+
+    return res.json({ error: 'TODO' });
+  }
 }
 
 export default new EquipmentController();
