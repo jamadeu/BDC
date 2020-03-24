@@ -146,6 +146,19 @@ class RequestController {
     }
 
     const { equipments, ...body } = req.body;
+
+    if (equipments) {
+      await equipments.map(e => {
+        const equipExist = Equipment.findByPk(e);
+        if (!equipExist) {
+          return res
+            .status(400)
+            .json({ error: `Equipamento não localizado, id ${e}` });
+        }
+        return true;
+      });
+    }
+
     await request.update(body);
 
     if (equipments && equipments.length > 0) {
