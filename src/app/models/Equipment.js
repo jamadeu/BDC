@@ -7,6 +7,7 @@ class Equipment extends Model {
         partnumber: Sequelize.STRING,
         series: Sequelize.STRING,
         model: Sequelize.STRING,
+        partnumber_serie: Sequelize.STRING,
       },
       {
         tableName: 'equipments',

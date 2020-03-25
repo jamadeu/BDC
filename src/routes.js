@@ -15,6 +15,7 @@ routes.get('/locality', LocalityController.index);
 
 routes.post('/equipment', EquipmentController.store);
 routes.get('/equipment/:id', EquipmentController.show);
+routes.get('/equipment', EquipmentController.index);
 
 routes.post('/request', RequestController.store);
 routes.get('/request', RequestController.index);

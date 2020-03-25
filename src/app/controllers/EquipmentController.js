@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import * as Yup from 'yup';
 
 import Equipment from '../models/Equipment';
@@ -17,7 +18,7 @@ class EquipmentController {
       return res.status(400).json({ error: 'Dados inválidos' });
     }
 
-    const { partnumber, series } = req.body;
+    const { partnumber, series, model } = req.body;
     const equipExists = await Equipment.findOne({
       where: { partnumber, series },
     });
@@ -26,13 +27,21 @@ class EquipmentController {
       return res.status(400).json({ error: 'Equipamento ja existe' });
     }
 
-    const { id, model } = await Equipment.create(req.body);
+    const partnumber_serie = `1S${partnumber}${series}`;
+
+    const { id } = await Equipment.create({
+      partnumber,
+      series,
+      model,
+      partnumber_serie,
+    });
 
     return res.json({
       id,
       partnumber,
       series,
       model,
+      partnumber_serie,
     });
   }
 
@@ -72,11 +81,22 @@ class EquipmentController {
   }
 
   async index(req, res) {
-    /**
-     * Implement list where: { series: req.body.series }
-     */
+    const { scan } = req.query;
 
-    return res.json({ error: 'TODO' });
+    const equipment = await Equipment.findAll({
+      where: {
+        partnumber_serie: {
+          [Op.endsWith]: scan,
+        },
+      },
+      attributes: ['id', 'partnumber', 'series', 'model'],
+    });
+
+    if (!equipment) {
+      return res.status(400).json({ error: 'Equipamento não localizado' });
+    }
+
+    return res.json(equipment);
   }
 }
 
