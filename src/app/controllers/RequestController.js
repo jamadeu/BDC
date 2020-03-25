@@ -52,6 +52,9 @@ class RequestController {
       {
         ...data,
         reserveds_date: new Date(),
+        /**
+         * checar se a data vai ser inputada pelo back-end ou pelo front
+         */
       },
       { include: 'equipments' }
     );
