@@ -1,5 +1,3 @@
-import * as Yup from 'yup';
-
 import Equipment from '../models/Equipment';
 import Locality from '../models/Locality';
 import Request from '../models/Request';
@@ -7,17 +5,6 @@ import User from '../models/User';
 
 class RequestController {
   async store(req, res) {
-    const schema = Yup.object().shape({
-      request: Yup.string().required(),
-      locality_id: Yup.number().required(),
-      user_id: Yup.number().required(),
-      equipments: Yup.array().required(),
-    });
-
-    if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ error: 'Dados inválidos' });
-    }
-
     const { equipments, ...data } = req.body;
 
     await equipments.map(e => {

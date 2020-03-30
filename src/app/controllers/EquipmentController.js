@@ -1,5 +1,4 @@
 import { Op } from 'sequelize';
-import * as Yup from 'yup';
 
 import Equipment from '../models/Equipment';
 import Locality from '../models/Locality';
@@ -9,16 +8,6 @@ import CreateEquipmentService from '../services/CreateEquipmentService';
 
 class EquipmentController {
   async store(req, res) {
-    const schema = Yup.object().shape({
-      partnumber: Yup.string().required(),
-      series: Yup.string().required(),
-      model: Yup.string().required(),
-    });
-
-    if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ error: 'Dados inválidos' });
-    }
-
     const { partnumber, series, model } = req.body;
 
     try {
