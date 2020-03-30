@@ -1,7 +1,7 @@
 import excelToJson from 'convert-excel-to-json';
 import { resolve } from 'path';
 
-import Equipment from '../models/Equipment';
+import CreateEquipmentService from '../services/CreateEquipmentService';
 
 class MassiveEquipmentController {
   async store(req, res) {
@@ -21,42 +21,27 @@ class MassiveEquipmentController {
 
     const equipmentsToCreate = await fileConvertedToJson.Sheet1.map(e => e);
 
-    const createEquipment = async equipment => {
-      const { partnumber, series, model } = equipment;
+    const createdEquipments = equipmentsToCreate.map(async equip => {
+      const { partnumber, series, model } = equip;
 
-      const equipmentExists = await Equipment.findOne({
-        where: { partnumber, series },
-      });
-
-      if (equipmentExists) {
+      try {
+        const { id } = await CreateEquipmentService.run({
+          partnumber,
+          series,
+          model,
+        });
+        return { id, partnumber, series, model };
+      } catch (error) {
         return {
-          error: 'Equipamento já existe',
-          id: equipmentExists.id,
+          error: error.message,
           partnumber,
           series,
         };
       }
-
-      const partnumber_serie = `1S${partnumber}${series}`;
-      const { id } = await Equipment.create({
-        partnumber,
-        series,
-        model,
-        partnumber_serie,
-      });
-
-      return { id, partnumber, series, model };
-    };
-
-    const createdEquipments = equipmentsToCreate.map(async equip => {
-      const result = await createEquipment(equip);
-      return result;
     });
 
-    (async () => {
-      const result = await Promise.all(createdEquipments);
-      return res.json(result);
-    })();
+    const result = await Promise.all(createdEquipments);
+    return res.json(result);
   }
 }
 

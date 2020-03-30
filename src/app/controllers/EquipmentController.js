@@ -5,6 +5,7 @@ import Equipment from '../models/Equipment';
 import Locality from '../models/Locality';
 import Request from '../models/Request';
 import User from '../models/User';
+import CreateEquipmentService from '../services/CreateEquipmentService';
 
 class EquipmentController {
   async store(req, res) {
@@ -19,30 +20,24 @@ class EquipmentController {
     }
 
     const { partnumber, series, model } = req.body;
-    const equipExists = await Equipment.findOne({
-      where: { partnumber, series },
-    });
 
-    if (equipExists) {
-      return res.status(400).json({ error: 'Equipamento ja existe' });
+    try {
+      const { id, partnumber_serie } = await CreateEquipmentService.run({
+        partnumber,
+        series,
+        model,
+      });
+
+      return res.json({
+        id,
+        partnumber,
+        series,
+        model,
+        partnumber_serie,
+      });
+    } catch (error) {
+      return res.status(400).json({ error: error.message });
     }
-
-    const partnumber_serie = `1S${partnumber}${series}`;
-
-    const { id } = await Equipment.create({
-      partnumber,
-      series,
-      model,
-      partnumber_serie,
-    });
-
-    return res.json({
-      id,
-      partnumber,
-      series,
-      model,
-      partnumber_serie,
-    });
   }
 
   async show(req, res) {
