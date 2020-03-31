@@ -4,3 +4,4 @@ tmp
 coverage
 *.lcov
 .env.test
+*.sqlite
