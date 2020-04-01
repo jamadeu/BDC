@@ -42,7 +42,7 @@ describe('Locality', () => {
     expect(response.status).toBe(400);
   });
 
-  it('should not be able to register a new user with login is not a string', async () => {
+  it('should not be able to register a new locality with locality is not a string', async () => {
     const locality = factory.attrs('Locality', {
       locality: 1,
     });
@@ -54,7 +54,7 @@ describe('Locality', () => {
     expect(response.status).toBe(400);
   });
 
-  it('should be able to list all users', async () => {
+  it('should be able to list all localities', async () => {
     const createdLocality = await factory.createMany('Locality', 5);
     const localities = await createdLocality.map(locality => {
       return {
