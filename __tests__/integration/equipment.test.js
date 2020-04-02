@@ -34,56 +34,47 @@ describe('Equipment', () => {
   });
 
   it('should not be able to register a new equipment with partnumber and series duplicated', async () => {
-    const equipment = await factory.attrs('Equipment');
+    const { partnumber, series, model } = await factory.create('Equipment');
 
-    await request(app)
-      .post('/equipment')
-      .send(equipment);
+    // await request(app)
+    //   .post('/equipment')
+    //   .send(equipment);
 
     const response = await request(app)
       .post('/equipment')
-      .send(equipment);
+      .send({
+        partnumber,
+        series,
+        model,
+      });
+
+    expect(response.body).toHaveProperty('error');
+    expect(response.status).toBe(400);
+  });
+
+  it('should not be able to show a equipment with a invalid id', async () => {
+    const id = 'a';
+    const response = await request(app).get(`/equipment/${id}`);
 
     expect(response.status).toBe(400);
   });
 
   it('should be able to show a equipment by id with request history', async () => {
-    const locality = await factory.create('Locality');
-    const user = await factory.create('User');
     const equipment = await factory.create('Equipment');
-    const requestBdc = await factory.create('Request', {
-      locality: locality.id,
-      user: user.id,
-      equipments: [equipment.id],
-    });
-
-    const expectedResult = {
-      id: equipment.id,
-      partnumber: equipment.partnumber,
-      series: equipment.series,
-      model: equipment.model,
-      requests: [
-        {
-          id: requestBdc.id,
-          request: requestBdc.request,
-          reserveds_date: requestBdc.reserveds_date,
-          seal: requestBdc.seal,
-          expedition_date: requestBdc.expedition_date,
-          invoice: requestBdc.invoice,
-          user: {
-            id: user.id,
-            login: user.login,
-          },
-          locality: {
-            id: locality.id,
-            locality: locality.locality,
-          },
-        },
-      ],
-    };
 
     const response = await request(app).get(`/equipment/${equipment.id}`);
 
-    expect(response.body).toMatchObject(expectedResult);
+    expect(response.body).toBeObject();
+  });
+
+  it('should be able to list 1 equipment by series', async () => {
+    const equipment = await factory.create('Equipment', {
+      series: 'abc',
+    });
+
+    console.log(equipment);
+    const response = await request(app).get('/equipment?scan=abc');
+
+    expect(response.body).toHaveProperty('id');
   });
 });

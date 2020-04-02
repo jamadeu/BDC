@@ -28,7 +28,7 @@ describe('Locality', () => {
     expect(response.status).toBe(400);
   });
 
-  it('should not be able to register a new locality with duplicated locality', async () => {
+  it('should not be able to register a duplicate locality', async () => {
     const locality = await factory.attrs('Locality');
 
     await request(app)
@@ -39,7 +39,8 @@ describe('Locality', () => {
       .post('/locality')
       .send(locality);
 
-    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty('error');
+    expect(response.status).toEqual(400);
   });
 
   it('should not be able to register a new locality with locality is not a string', async () => {
@@ -62,6 +63,7 @@ describe('Locality', () => {
         locality: locality.locality,
       };
     });
+
     const response = await request(app).get('/locality');
 
     expect(response.body).toMatchObject(localities);

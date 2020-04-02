@@ -15,16 +15,37 @@ factory.define('Locality', Locality, {
 });
 
 factory.define('Equipment', Equipment, {
-  partnumber: faker.random.alphaNumeric(),
-  series: faker.random.alphaNumeric(),
-  model: faker.random.alphaNumeric(),
+  partnumber: faker.random.word(),
+  series: faker.random.word(),
+  model: faker.random.word(),
 });
 
 factory.define('Request', Request, {
   request: faker.random.number(),
-  locality_id: 1,
-  user_id: 1,
-  equipments: [1],
+  locality_id: factory.assoc('Locality', 'id'),
+  user_id: factory.assoc('User', 'id'),
+  equipments: [factory.assoc('Equipment', 'id')],
+
+  // afterBuild: async (model, attrs) => {
+  //   const request = model;
+
+  //   if (!attrs.locality_id) {
+  //     const locality = await factory.create('Locality');
+  //     request.locality_id = locality.id;
+  //   }
+
+  //   if (!attrs.user_id) {
+  //     const user = await factory.create('User');
+  //     request.user_id = user.id;
+  //   }
+
+  //   if (!attrs.equipments) {
+  //     const equipment = await factory.create('Equipment');
+  //     request.equipments = [equipment.id];
+  //   }
+
+  //   return request;
+  // },
 });
 
 export default factory;

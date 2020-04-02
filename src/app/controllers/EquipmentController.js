@@ -61,6 +61,10 @@ class EquipmentController {
       ],
     });
 
+    if (!equipment) {
+      return res.status(400).json({ error: 'Equipamento não localizado' });
+    }
+
     return res.json(equipment);
   }
 
@@ -83,7 +87,7 @@ class EquipmentController {
     /**
      * Função está retornando um array de objetos com os equipamentos encontrados,
      * Melhor retornar apenas o json de 1 equipamento?
-     * E se localizar mais de 1 equipamento
+     * E se localizar mais de 1 equipamento?
      */
 
     return res.json(equipment);
