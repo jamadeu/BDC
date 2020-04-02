@@ -80,7 +80,7 @@ class EquipmentController {
       attributes: ['id', 'partnumber', 'series', 'model'],
     });
 
-    if (!equipment) {
+    if (equipment.length === 0) {
       return res.status(400).json({ error: 'Equipamento não localizado' });
     }
 

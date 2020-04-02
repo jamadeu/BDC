@@ -59,22 +59,36 @@ describe('Equipment', () => {
     expect(response.status).toBe(400);
   });
 
-  it('should be able to show a equipment by id with request history', async () => {
-    const equipment = await factory.create('Equipment');
+  it('should be able to show a equipment by id whit request history', async () => {
+    const equipment = await factory.attrs('Equipment');
 
-    const response = await request(app).get(`/equipment/${equipment.id}`);
+    const { id } = await request(app)
+      .post('/equipment')
+      .send(equipment);
 
+    const response = await request(app).get(`/equipment/${id}`);
+
+    expect(response.status).toBe(200);
     expect(response.body).toBeObject();
   });
 
   it('should be able to list 1 equipment by series', async () => {
-    const equipment = await factory.create('Equipment', {
-      series: 'abc',
-    });
+    const equipment = await factory.attrs('Equipment');
 
-    console.log(equipment);
-    const response = await request(app).get('/equipment?scan=abc');
+    await request(app)
+      .post('/equipment')
+      .send(equipment);
 
-    expect(response.body).toHaveProperty('id');
+    const response = await request(app).get(
+      `/equipment?scan=${equipment.series}`
+    );
+
+    expect(response.status).toBe(200);
+  });
+
+  it('should not be able to list equipment by a series not registered', async () => {
+    const response = await request(app).get('/equipment?scan=serie');
+
+    expect(response.status).toBe(400);
   });
 });

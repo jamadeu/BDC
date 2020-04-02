@@ -20,32 +20,34 @@ factory.define('Equipment', Equipment, {
   model: faker.random.word(),
 });
 
-factory.define('Request', Request, {
-  request: faker.random.number(),
-  locality_id: factory.assoc('Locality', 'id'),
-  user_id: factory.assoc('User', 'id'),
-  equipments: [factory.assoc('Equipment', 'id')],
+factory.define(
+  'Request',
+  Request,
+  () => ({
+    request: faker.random.number(),
+  }),
+  {
+    afterBuild: async (model, attrs) => {
+      const request = model;
 
-  // afterBuild: async (model, attrs) => {
-  //   const request = model;
+      if (!attrs.locality_id) {
+        const locality = await factory.create('Locality');
+        request.locality_id = locality.id;
+      }
 
-  //   if (!attrs.locality_id) {
-  //     const locality = await factory.create('Locality');
-  //     request.locality_id = locality.id;
-  //   }
+      if (!attrs.user_id) {
+        const user = await factory.create('User');
+        request.user_id = user.id;
+      }
 
-  //   if (!attrs.user_id) {
-  //     const user = await factory.create('User');
-  //     request.user_id = user.id;
-  //   }
+      if (!attrs.equipments) {
+        const equipment = await factory.create('Equipment');
+        request.equipments = [equipment.id];
+      }
 
-  //   if (!attrs.equipments) {
-  //     const equipment = await factory.create('Equipment');
-  //     request.equipments = [equipment.id];
-  //   }
-
-  //   return request;
-  // },
-});
+      return request;
+    },
+  }
+);
 
 export default factory;
