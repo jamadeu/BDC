@@ -2,26 +2,32 @@ import Equipment from '../models/Equipment';
 import Locality from '../models/Locality';
 import Request from '../models/Request';
 import User from '../models/User';
+import CheckEquip from '../services/CheckEquipmentExistsByIdService';
 
 class RequestController {
   async store(req, res) {
     const { equipments, ...data } = req.body;
 
-    await equipments.map(e => {
-      const equipExist = Equipment.findByPk(e);
-      if (!equipExist) {
-        return res
-          .status(400)
-          .json({ error: `Equipamento não localizado, id ${e}` });
-      }
-      return true;
-    });
+    try {
+      await Promise.all(
+        await equipments.map(e => {
+          return CheckEquip.run(e);
+        })
+      );
+    } catch (error) {
+      return res.status(400).json({ error: error.message });
+    }
 
     const requestExist = await Request.findOne({
       where: { request: data.request },
     });
 
     if (requestExist && data.request !== 'Estoque mínimo') {
+      /**
+       * Caso iprime sera versionado como gars?
+       * Ex: Iprime1, Iprime2...
+       *
+       */
       return res.status(400).json({ error: 'Request ja existe' });
     }
 
@@ -46,9 +52,7 @@ class RequestController {
       { include: 'equipments' }
     );
 
-    if (equipments && equipments.length > 0) {
-      assigned.setEquipments(equipments);
-    }
+    assigned.setEquipments(equipments);
 
     const { id, request, locality_id, user_id, reserveds_date } = assigned;
 
@@ -125,6 +129,10 @@ class RequestController {
       ],
     });
 
+    if (!request) {
+      return res.status(400).json({ error: 'Request não localizada' });
+    }
+
     return res.json(request);
   }
 
@@ -138,15 +146,15 @@ class RequestController {
     const { equipments, ...body } = req.body;
 
     if (equipments) {
-      await equipments.map(e => {
-        const equipExist = Equipment.findByPk(e);
-        if (!equipExist) {
-          return res
-            .status(400)
-            .json({ error: `Equipamento não localizado, id ${e}` });
-        }
-        return true;
-      });
+      try {
+        await Promise.all(
+          await equipments.map(e => {
+            return CheckEquip.run(e);
+          })
+        );
+      } catch (error) {
+        return res.status(400).json({ error: error.message });
+      }
     }
 
     await request.update(body);

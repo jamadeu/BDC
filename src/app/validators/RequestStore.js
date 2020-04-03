@@ -6,7 +6,9 @@ export default async (req, res, next) => {
       request: Yup.string().required(),
       locality_id: Yup.number().required(),
       user_id: Yup.number().required(),
-      equipments: Yup.array().required(),
+      equipments: Yup.array()
+        .min(1)
+        .required(),
     });
 
     await schema.validate(req.body, { abortEarly: false });
