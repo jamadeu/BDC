@@ -26,10 +26,12 @@ module.exports = {
       locality_id: {
         type: Sequelize.INTEGER,
         references: { model: 'localities', key: 'id' },
+        onDelete: 'CASCADE',
       },
       user_id: {
         type: Sequelize.INTEGER,
         references: { model: 'users', key: 'id' },
+        onDelete: 'CASCADE',
       },
       created_at: {
         type: Sequelize.DATE,
