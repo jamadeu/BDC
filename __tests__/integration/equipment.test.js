@@ -60,16 +60,14 @@ describe('Equipment', () => {
   });
 
   it('should be able to show a equipment by id whit request history', async () => {
-    const equipment = await factory.attrs('Equipment');
+    const equipment = await factory.create('Equipment');
 
-    const { id } = await request(app)
-      .post('/equipment')
-      .send(equipment);
+    const response = await request(app).get(`/equipment/${equipment.id}`);
 
-    const response = await request(app).get(`/equipment/${id}`);
+    const keys = ['id', 'partnumber', 'series', 'model', 'requests'];
 
     expect(response.status).toBe(200);
-    expect(response.body).toBeObject();
+    expect(response.body).toContainAllKeys(keys);
   });
 
   it('should be able to list 1 equipment by series', async () => {
